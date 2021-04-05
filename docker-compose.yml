@@ -1,0 +1,42 @@
+version: "3.5"
+services:
+  tarantool:
+    build:
+      context: .
+      target: dev
+    volumes: 
+      - ./data/tarantool:/var/lib/tarantool
+      - ./app:/opt/tarantool
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+      - "3301:3301"
+    command: tarantool /opt/tarantool/main.lua
+
+  tests:
+    build:
+      context: .
+      target: test
+    volumes:
+      - ./tests:/tests
+    env_file:
+      - .env
+    command: pytest
+    depends_on:
+      - tarantool_test
+    stdin_open: true
+    tty: true
+
+  tarantool_test:
+    build:
+      context: .
+      target: dev
+    volumes: 
+      - ./app:/opt/tarantool
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+      - "3301:3301"
+    command: tarantool /opt/tarantool/main.lua
