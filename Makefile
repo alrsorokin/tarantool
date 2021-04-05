@@ -12,7 +12,7 @@ help:
 
 build:  ## Сборка проекта
 	@echo -e '${Cyan}Сборка проекта${Color_Off}'
-	@docker-compose build --parallel
+	@docker-compose build
 
 start:  ## Запуск проекта
 	@docker-compose up tarantool
