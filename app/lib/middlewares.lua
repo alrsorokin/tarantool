@@ -8,16 +8,16 @@ local middlewares = {}
 middlewares.too_many_request_handler = function(req)
     log.info('test')
     log.info(req:headers())
-    local host = req:header('host')
+    local ip = req:header('x-real-ip')
 
-    local record = box.space.time:get(host)
+    local record = box.space.time:get(ip)
     local current_time = os.time(os.date("!*t"))
     if record and current_time-record[2] < tonumber(os.getenv("REQUEST_TIMEOUT")) then
         
         return http_code.too_many_request_429
     end
 
-    box.space.time:replace{host, current_time}
+    box.space.time:replace{ip, current_time}
     return req:next()
 end
 
